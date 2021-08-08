@@ -9,6 +9,9 @@ typedef struct Grafo
   list <ll> *adj;
 }grafo;
 
+grafo *insercao_elementos(grafo *G);
+grafo *reverso(grafo *G);
+
 int main() {
   grafo *G;
   int n_vertices;
@@ -25,6 +28,22 @@ int main() {
   }
 
   G = insercao_elementos(G);
+
+
+  for(int i=0; i<G->V; i++) {
+    for(auto it : G->adj[i]){
+        cout << dic[i] <<  ", " << dic[it.first] << endl;
+    }
+  }
+
+  grafo *G_reverso;
+  G_reverso = reverso(G);
+
+  for(int i=0; i<G_reverso->V; i++) {
+    for(auto it : G_reverso->adj[i]){
+        cout << dic[i] <<  ", " << dic[it.first] << endl;
+    }
+  }
 
   return 0;
 }
@@ -46,4 +65,23 @@ grafo *insercao_elementos(grafo *G)
       break;
   }
   return G;
+}
+
+grafo *reverso(grafo *G)
+{
+  grafo *G_reverso;
+  G_reverso = (grafo*)malloc(sizeof(grafo));
+  G_reverso->V = G->V;
+  G_reverso->adj = new list<ll>[G_reverso->V];
+
+  for(int i=0; i<G->V; i++)
+  {
+    for(auto it : G->adj[i])
+    {
+      G_reverso->adj[it.first].push_back(make_pair(i, 0));
+      G_reverso->adj[it.first].begin()->second++;
+    }
+  }
+
+  return G_reverso;
 }
