@@ -17,6 +17,7 @@ grafo *insercao_elementos(grafo *G);
 grafo *reverso(grafo *G);
 grafo *init(grafo *G, int n_vertices);
 grafo *excluir(grafo* G_reverso, int i);
+pair<int, int> ordenacao_topologica(grafo *reverso);
 
 int main() {
   grafo *G;
@@ -51,8 +52,19 @@ int main() {
     }
   }
 
-  G_reverso = excluir(G_reverso, 0);
-  cout << "Excluido";
+  pair<int, int> flags; /*Flags são para pegar índices dos vértices "errados"*/
+  flags = ordenacao_topologica(G_reverso);
+
+  /*Se flags.first > 1, significa que existem nós que estão "errados"*/
+  if(flags.first>-1)
+  {
+    cout << "Impossível montar esse fluxo!\n\n" << "Os cursos: " << dic[flags.first];
+    cout << " e " << dic[flags.second] << " estão com pré-requisitos equivocados!\n";
+    cout << "\nExiste um ciclo entre os seguintes componentes:\n\n";
+  }
+
+  else
+    cout << "É possível montar esse fluxo !\n";
 
   return 0;
 }
@@ -120,4 +132,34 @@ grafo *excluir(grafo* G_reverso, int i)
     }
   }
   return G_reverso;
+}
+
+pair<int, int> ordenacao_topologica(grafo *G_reverso)
+{
+  pair<int, int> flags;
+  flags.first = -1;
+  flags.second = -1;
+  for(int i=0; i<G_reverso->V; i++)
+  {
+    heap.push(make_pair(-G_reverso->adj[i].begin()->second, i));
+  }
+  while(heap.top().first >= 0)
+  {
+    int j = heap.top().second;
+    heap.pop();
+    if(G_reverso->adj[j].empty())
+      G_reverso = excluir(G_reverso, j);
+  }
+
+  for(int i=0; i<G_reverso->V; i++)
+  {
+    if(!G_reverso->adj[i].empty())
+    {
+      flags.first= i;
+      flags.second = G_reverso->adj[i].begin()->first;
+      break;
+    }
+  }
+
+  return flags;
 }
