@@ -5,6 +5,7 @@ using ll = pair<int, int>;
 
 map<string, int> dicionario;
 map<int, string> dic;
+priority_queue <pair<int, int>> heap;
 
 typedef struct Grafo
 {
@@ -15,6 +16,7 @@ typedef struct Grafo
 grafo *insercao_elementos(grafo *G);
 grafo *reverso(grafo *G);
 grafo *init(grafo *G, int n_vertices);
+grafo *excluir(grafo* G_reverso, int i);
 
 int main() {
   grafo *G;
@@ -48,6 +50,9 @@ int main() {
         cout << dic[i] <<  ", " << dic[it.first] << endl;
     }
   }
+
+  G_reverso = excluir(G_reverso, 0);
+  cout << "Excluido";
 
   return 0;
 }
@@ -95,5 +100,24 @@ grafo *reverso(grafo *G)
     }
   }
 
+  return G_reverso;
+}
+
+grafo *excluir(grafo* G_reverso, int i)
+{
+  for(int j=0; j<G_reverso->V; j++)
+  {
+    if(!G_reverso->adj[j].empty())
+    for(list<ll> :: iterator it = G_reverso->adj[j].begin(); it != G_reverso->adj[j].end();it++)
+    {
+      if(it->first == i)
+      {
+        G_reverso->adj[j].erase(it);
+        /*Atualizando o heap*/
+        heap.push(make_pair(-(G_reverso->adj[j].begin()->second--), j));
+        break;
+      }
+    }
+  }
   return G_reverso;
 }
