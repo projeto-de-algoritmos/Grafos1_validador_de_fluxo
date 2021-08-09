@@ -18,6 +18,7 @@ grafo *reverso(grafo *G);
 grafo *init(grafo *G, int n_vertices);
 grafo *excluir(grafo* G_reverso, int i);
 grafo *BFS(grafo *G_reverso, int x);
+void SCC(grafo *G_reverso); 
 pair<int, int> ordenacao_topologica(grafo *reverso);
 void DFS(grafo *G, int origem); /*Busca em profundidade*/
 vector<int> DFS_recursivo(grafo *G, int origem, vector<int> visitados); /*Busca em profundidade*/
@@ -68,6 +69,7 @@ int main() {
     cout << "Impossível montar esse fluxo!\n\n" << "Os cursos: " << dic[flags.first];
     cout << " e " << dic[flags.second] << " estão com pré-requisitos equivocados!\n";
     cout << "\nExiste um ciclo entre os seguintes componentes:\n\n";
+    SCC(G);
   }
 
   else
@@ -220,6 +222,30 @@ void DFS(grafo *G, int origem)
     return visitados;
   }
 
+void SCC(grafo *G_reverso)
+{
+  DFS(G_reverso, 0);
+  G_reverso = reverso(G_reverso);
+  sort(DFS_numering.begin(), DFS_numering.end(), comp);
+
+
+  int j=0;
+  for(int i=0; j!=-1; i++)
+  {
+    j = DFS_numering[i].first;
+    if(j==-1) break;
+    else if(!G_reverso->adj[j].empty())
+    {
+      /*Dentro do BFS já é realizada e exclusão*/
+      G_reverso = BFS(G_reverso, j);
+      cout << endl;
+    }
+    else
+    G_reverso = excluir(G_reverso, j);
+  }
+}
+
+
 grafo *BFS(grafo *G_reverso, int x)
 {
   queue<int> fila;
@@ -256,4 +282,9 @@ grafo *BFS(grafo *G_reverso, int x)
   }
 
   return G_reverso;
+}
+
+bool comp(pair<int, int> a, pair<int, int> b)
+{
+  return a.second > b.second; /*Retorna elemento com o maior segundo valor*/
 }
