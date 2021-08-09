@@ -1,0 +1,81 @@
+45
+APC
+Calculo1
+EngenhariaEAmbiente
+IntroduçãoAEngenharia
+DIAC
+IAL
+Calculo2
+Fisica1
+PE
+DS
+FisicaExperimental
+EngenhariaEconômica
+MétodosNuméricosParaEngenharia
+TED1
+PED1
+OO
+EMC
+GEPEQ
+PI1
+SDB
+EDA
+MDS
+FAC
+FSO
+TecProg
+Requisitos
+IHC
+EDA2
+MediçãoEAnálise
+GPP
+Desenho
+Verival
+FundamentosDeRedes
+LBD
+PP
+ManutençãoEEvoluçãoDeSoftware
+DAS
+MelhoriaDeProcessoDeSoftware
+GCS
+FundamentosDeSistemasDistribuidos
+PI2
+ProdutividadeEProfissionalismoEmES
+EstágioSupervisionado
+TCC1
+TCC2
+Calculo1 Calculo2
+Calculo1 PE
+APC DS
+Calculo2 MétodosNuméricosParaEngenharia
+IAL TED1
+IAL PED1
+APC OO
+EngenhariaEconômica GPEQ
+EMC SBD
+OO MDS
+TED1 FAC
+PED1 FAC
+APC EDA
+FAC FSO
+OO TecProg
+MDS Requisitos
+MDS IHC
+OO IHC
+EDA EDA2
+GPEQ GPP
+Requisitos Desenho
+MDS MediçãoEAnálise
+Requisitos Verival
+FAC FundamentosDeRedes
+ManutençãoEEvoluçãoDeSoftware LBD
+OO PP
+MDS PP
+MDS ManutençãoEEvoluçãoDeSoftware
+Desenho DAS
+MDS GCS
+PI1 PI2
+GPEQ ProdutividadeEProfissionalismoEmES
+TCC1 TCC2
+DAS
+-1 -1
