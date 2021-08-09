@@ -17,6 +17,7 @@ grafo *insercao_elementos(grafo *G);
 grafo *reverso(grafo *G);
 grafo *init(grafo *G, int n_vertices);
 grafo *excluir(grafo* G_reverso, int i);
+grafo *BFS(grafo *G_reverso, int x);
 pair<int, int> ordenacao_topologica(grafo *reverso);
 void DFS(grafo *G, int origem); /*Busca em profundidade*/
 vector<int> DFS_recursivo(grafo *G, int origem, vector<int> visitados); /*Busca em profundidade*/
@@ -167,7 +168,15 @@ pair<int, int> ordenacao_topologica(grafo *G_reverso)
     }
   }
 
-  void DFS(grafo *G, int origem)
+  return flags;
+}
+
+void DFS(grafo *G, int origem)
+{
+  cout << "\nDFS:\n";
+  vector <int> visitados(G->V+2, 0);
+
+  for(int i=origem; i<G->V; i++)
   {
     cout << "\nDFS:\n";
     vector <int> visitados(G->V+2, 0);
@@ -211,6 +220,40 @@ pair<int, int> ordenacao_topologica(grafo *G_reverso)
     return visitados;
   }
 
+grafo *BFS(grafo *G_reverso, int x)
+{
+  queue<int> fila;
+  bool visitados[G_reverso->V];
+  G_reverso = excluir(G_reverso, x);
+  for(int i = 0; i < G_reverso->V; i++)
+		visitados[i] = false;
+  visitados[x] = true;
+  while(true)
+  {
 
-  return flags;
+    for(list<ll>::iterator it = G_reverso->adj[x].begin(); it != G_reverso->adj[x].end(); it++)
+    {
+      if(!visitados[it->first])
+      {
+        visitados[it->first] = true;
+        fila.push(it->first);
+      }
+    }
+
+    if(!fila.empty())
+    {
+      cout << dic[x] << " -> ";
+      x = fila.front();
+      fila.pop();
+      G_reverso = excluir(G_reverso, x);
+    }
+
+    else
+    {
+      cout << dic[x] << "\n";
+      break;
+    }
+  }
+
+  return G_reverso;
 }
