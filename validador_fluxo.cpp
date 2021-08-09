@@ -3,6 +3,9 @@
 using namespace std;
 using ll = pair<int, int>;
 
+map<string, int> dicionario;
+map<int, string> dic;
+
 typedef struct Grafo
 {
   int V;
@@ -11,6 +14,7 @@ typedef struct Grafo
 
 grafo *insercao_elementos(grafo *G);
 grafo *reverso(grafo *G);
+grafo *init(grafo *G, int n_vertices);
 
 int main() {
   grafo *G;
@@ -46,6 +50,14 @@ int main() {
   }
 
   return 0;
+}
+
+grafo *init(grafo *G, int n_vertices)
+{
+  G = (grafo*)malloc(sizeof(grafo));
+  G->adj = new list<ll>[n_vertices];
+  G->V = n_vertices;
+  return G;
 }
 
 grafo *insercao_elementos(grafo *G)
