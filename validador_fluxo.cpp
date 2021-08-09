@@ -18,6 +18,8 @@ grafo *reverso(grafo *G);
 grafo *init(grafo *G, int n_vertices);
 grafo *excluir(grafo* G_reverso, int i);
 pair<int, int> ordenacao_topologica(grafo *reverso);
+void DFS(grafo *G, int origem); /*Busca em profundidade*/
+vector<int> DFS_recursivo(grafo *G, int origem, vector<int> visitados); /*Busca em profundidade*/
 
 int main() {
   grafo *G;
@@ -54,6 +56,10 @@ int main() {
 
   pair<int, int> flags; /*Flags são para pegar índices dos vértices "errados"*/
   flags = ordenacao_topologica(G_reverso);
+
+  DFS(G, 0);
+  DFS(G_reverso, 0);
+
 
   /*Se flags.first > 1, significa que existem nós que estão "errados"*/
   if(flags.first>-1)
@@ -160,6 +166,51 @@ pair<int, int> ordenacao_topologica(grafo *G_reverso)
       break;
     }
   }
+
+  void DFS(grafo *G, int origem)
+  {
+    cout << "\nDFS:\n";
+    vector <int> visitados(G->V+2, 0);
+
+    for(int i=origem; i<G->V; i++)
+    {
+      if(visitados[i] == 0)
+      {
+        visitados[i] = 1;
+        visitados = DFS_recursivo(G, i, visitados);
+      }
+    }
+
+    for(int i=0; i<origem; i++)
+    {
+      if(visitados[i] == 0)
+      {
+        visitados[i] = 1;
+        visitados = DFS_recursivo(G, i, visitados);
+      }
+    }
+
+    cout << endl << endl;
+  }
+
+  vector<int> DFS_recursivo(grafo *G, int origem, vector <int> visitados)
+  {
+    cout << dic[origem] << " ";
+    ++visitados[(G->V+1)]; // Para enumerar os nós pecorridos
+    DFS_numering[origem].first = origem;
+    for(auto it : G->adj[origem])
+    {
+      if(visitados[it.first] == 0)
+      {
+        visitados[it.first] = 1;
+        visitados = DFS_recursivo(G, it.first, visitados);
+      }
+    }
+
+    DFS_numering[origem].second = ++visitados[(G->V+1)];
+    return visitados;
+  }
+
 
   return flags;
 }
