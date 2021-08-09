@@ -1,67 +1,76 @@
+/*
+Alunos: Matheus Roberto e Daniel Oda
+
+Para compilar: g++ trabalho_1.cpp -std=c++11
+Para rodar testes: ./a.out < nome_do_teste.txt
+*/
+
 #include <bits/stdc++.h>
 
 using namespace std;
 using ll = pair<int, int>;
 
+/*Variáveis globais*/
+/*
+DFS_numering.first = índice do elementos
+DFS_numering.second = post do elemento
+dic: int para string
+dicionario: string para int
+heap.first = n° de elementos do vértice
+heap.second = índice do elemento
+*/
+vector<pair<int, int>> DFS_numering(50, make_pair(-1, -1));
 map<string, int> dicionario;
 map<int, string> dic;
 priority_queue <pair<int, int>> heap;
 
+/*Definindo estrutura do Grafo*/
 typedef struct Grafo
 {
   int V;
   list <ll> *adj;
+  /*
+  adj.first = índice da string
+  adj.second = número de elementos
+  */
 }grafo;
 
-grafo *insercao_elementos(grafo *G);
-grafo *reverso(grafo *G);
-grafo *init(grafo *G, int n_vertices);
-grafo *excluir(grafo* G_reverso, int i);
-grafo *BFS(grafo *G_reverso, int x);
-void SCC(grafo *G_reverso); 
-pair<int, int> ordenacao_topologica(grafo *reverso);
+
+/*Declarações das funções*/
+grafo *init(grafo *G, int n_vertices); /*Função para inicializar grafos*/
+grafo *insercao_elementos(grafo *G); /*Função para inserir elementos*/
+grafo *reverso(grafo *G); /*Função para montar o grafo reverso*/
 void DFS(grafo *G, int origem); /*Busca em profundidade*/
 vector<int> DFS_recursivo(grafo *G, int origem, vector<int> visitados); /*Busca em profundidade*/
+grafo *excluir(grafo* G_reverso, int i); /*Função para excluir o elemento i do grafo*/
+void SCC(grafo *G_reverso); /*Função para entregar os elementos fortementes conectados*/
+grafo *BFS(grafo *G_reverso, int x); /*Função busca em largura*/
+bool comp(pair<int, int> a, pair<int, int> b);  /*Função de comparação para dar o sort*/
+pair<int, int> ordenacao_topologica(grafo *reverso);
 
 int main() {
   grafo *G;
   int n_vertices;
 
-  cout << "Informe o número de elementos que tem o seu grafo\n";
+  //cout << "Informe o número de elementos que tem o seu grafo\n";
   cin >> n_vertices;
   G = init(G, n_vertices);
   for(int i=0; i<G->V; i++)
   {
     string s;
     cin >> s;
+    /*Dois maps para facilitar o uso de string*/
     dicionario[s] = i;
     dic[i] = s;
   }
 
   G = insercao_elementos(G);
 
-
-  for(int i=0; i<G->V; i++) {
-    for(auto it : G->adj[i]){
-        cout << dic[i] <<  ", " << dic[it.first] << endl;
-    }
-  }
-
   grafo *G_reverso;
   G_reverso = reverso(G);
 
-  for(int i=0; i<G_reverso->V; i++) {
-    for(auto it : G_reverso->adj[i]){
-        cout << dic[i] <<  ", " << dic[it.first] << endl;
-    }
-  }
-
   pair<int, int> flags; /*Flags são para pegar índices dos vértices "errados"*/
   flags = ordenacao_topologica(G_reverso);
-
-  DFS(G, 0);
-  DFS(G_reverso, 0);
-
 
   /*Se flags.first > 1, significa que existem nós que estão "errados"*/
   if(flags.first>-1)
@@ -76,14 +85,6 @@ int main() {
     cout << "É possível montar esse fluxo !\n";
 
   return 0;
-}
-
-grafo *init(grafo *G, int n_vertices)
-{
-  G = (grafo*)malloc(sizeof(grafo));
-  G->adj = new list<ll>[n_vertices];
-  G->V = n_vertices;
-  return G;
 }
 
 grafo *insercao_elementos(grafo *G)
@@ -105,44 +106,9 @@ grafo *insercao_elementos(grafo *G)
   return G;
 }
 
-grafo *reverso(grafo *G)
-{
-  grafo *G_reverso;
-  G_reverso = (grafo*)malloc(sizeof(grafo));
-  G_reverso->V = G->V;
-  G_reverso->adj = new list<ll>[G_reverso->V];
-
-  for(int i=0; i<G->V; i++)
-  {
-    for(auto it : G->adj[i])
-    {
-      G_reverso->adj[it.first].push_back(make_pair(i, 0));
-      G_reverso->adj[it.first].begin()->second++;
-    }
-  }
-
-  return G_reverso;
-}
-
-grafo *excluir(grafo* G_reverso, int i)
-{
-  for(int j=0; j<G_reverso->V; j++)
-  {
-    if(!G_reverso->adj[j].empty())
-    for(list<ll> :: iterator it = G_reverso->adj[j].begin(); it != G_reverso->adj[j].end();it++)
-    {
-      if(it->first == i)
-      {
-        G_reverso->adj[j].erase(it);
-        /*Atualizando o heap*/
-        heap.push(make_pair(-(G_reverso->adj[j].begin()->second--), j));
-        break;
-      }
-    }
-  }
-  return G_reverso;
-}
-
+/*
+Função para verificar se existe ciclo no grafo
+*/
 pair<int, int> ordenacao_topologica(grafo *G_reverso)
 {
   pair<int, int> flags;
@@ -150,8 +116,19 @@ pair<int, int> ordenacao_topologica(grafo *G_reverso)
   flags.second = -1;
   for(int i=0; i<G_reverso->V; i++)
   {
+    // O valor é colocado como negativo para fazer a ordenação
     heap.push(make_pair(-G_reverso->adj[i].begin()->second, i));
   }
+
+  /*Como o heap é atualizado, a contagem seria maior que o necessário*/
+  // while(!heap.empty())
+
+  /*Nem sempre é necessário visualizar todos os elementos, apenas os que tem a
+  lista de adjacência igual a zero.*/
+  //  for(int i=0; i<=G_reverso->V; i++)
+
+  /*Enquanto existir elementos com 0 ou menos (pois está com sinal negativo)
+  elementos no heap.*/
   while(heap.top().first >= 0)
   {
     int j = heap.top().second;
@@ -173,55 +150,9 @@ pair<int, int> ordenacao_topologica(grafo *G_reverso)
   return flags;
 }
 
-void DFS(grafo *G, int origem)
-{
-  cout << "\nDFS:\n";
-  vector <int> visitados(G->V+2, 0);
-
-  for(int i=origem; i<G->V; i++)
-  {
-    cout << "\nDFS:\n";
-    vector <int> visitados(G->V+2, 0);
-
-    for(int i=origem; i<G->V; i++)
-    {
-      if(visitados[i] == 0)
-      {
-        visitados[i] = 1;
-        visitados = DFS_recursivo(G, i, visitados);
-      }
-    }
-
-    for(int i=0; i<origem; i++)
-    {
-      if(visitados[i] == 0)
-      {
-        visitados[i] = 1;
-        visitados = DFS_recursivo(G, i, visitados);
-      }
-    }
-
-    cout << endl << endl;
-  }
-
-  vector<int> DFS_recursivo(grafo *G, int origem, vector <int> visitados)
-  {
-    cout << dic[origem] << " ";
-    ++visitados[(G->V+1)]; // Para enumerar os nós pecorridos
-    DFS_numering[origem].first = origem;
-    for(auto it : G->adj[origem])
-    {
-      if(visitados[it.first] == 0)
-      {
-        visitados[it.first] = 1;
-        visitados = DFS_recursivo(G, it.first, visitados);
-      }
-    }
-
-    DFS_numering[origem].second = ++visitados[(G->V+1)];
-    return visitados;
-  }
-
+/*
+Para encontrar grupo/os de elementos fortementes conectados
+*/
 void SCC(grafo *G_reverso)
 {
   DFS(G_reverso, 0);
@@ -245,7 +176,85 @@ void SCC(grafo *G_reverso)
   }
 }
 
+/*
+Função que exclui o nó com índice i de todas as listas de adjacências que ele se
+encontra, é utilizado para fazer a ordenação topológica.
+*/
+grafo *excluir(grafo* G_reverso, int i)
+{
+  for(int j=0; j<G_reverso->V; j++)
+  {
+    if(!G_reverso->adj[j].empty())
+    for(list<ll> :: iterator it = G_reverso->adj[j].begin(); it != G_reverso->adj[j].end();it++)
+    {
+      if(it->first == i)
+      {
+        G_reverso->adj[j].erase(it);
+        /*Atualizando o heap*/
+        heap.push(make_pair(-(G_reverso->adj[j].begin()->second--), j));
+        break;
+      }
+    }
+  }
+  return G_reverso;
+}
 
+
+
+
+/*
+Busca em profundidade, necessária para fazer os elementos fortementes conectados
+*/
+void DFS(grafo *G, int origem)
+{
+  //cout << "\nDFS:\n";
+  vector <int> visitados(G->V+2, 0);
+
+  for(int i=origem; i<G->V; i++)
+  {
+    if(visitados[i] == 0)
+    {
+      visitados[i] = 1;
+      visitados = DFS_recursivo(G, i, visitados);
+    }
+  }
+
+  for(int i=0; i<origem; i++)
+  {
+    if(visitados[i] == 0)
+    {
+      visitados[i] = 1;
+      visitados = DFS_recursivo(G, i, visitados);
+    }
+  }
+
+  //cout << endl << endl;
+}
+
+vector<int> DFS_recursivo(grafo *G, int origem, vector <int> visitados)
+{
+//  cout << dic[origem] << " ";
+  ++visitados[(G->V+1)]; // Para enumerar os nós pecorridos
+  DFS_numering[origem].first = origem;
+  for(auto it : G->adj[origem])
+  {
+    if(visitados[it.first] == 0)
+    {
+      visitados[it.first] = 1;
+      visitados = DFS_recursivo(G, it.first, visitados);
+    }
+  }
+
+  DFS_numering[origem].second = ++visitados[(G->V+1)];
+  return visitados;
+}
+
+
+
+/*
+Busca em largura, necessária para verificar os grupos de elementos fortementes
+conectados
+*/
 grafo *BFS(grafo *G_reverso, int x)
 {
   queue<int> fila;
@@ -282,6 +291,34 @@ grafo *BFS(grafo *G_reverso, int x)
   }
 
   return G_reverso;
+}
+
+grafo *reverso(grafo *G)
+{
+  grafo *G_reverso;
+  G_reverso = (grafo*)malloc(sizeof(grafo));
+  G_reverso->V = G->V;
+  G_reverso->adj = new list<ll>[G_reverso->V];
+
+  for(int i=0; i<G->V; i++)
+  {
+    for(auto it : G->adj[i])
+    {
+      G_reverso->adj[it.first].push_back(make_pair(i, 0));
+      G_reverso->adj[it.first].begin()->second++;
+    }
+  }
+
+  return G_reverso;
+}
+
+
+grafo *init(grafo *G, int n_vertices)
+{
+  G = (grafo*)malloc(sizeof(grafo));
+  G->adj = new list<ll>[n_vertices];
+  G->V = n_vertices;
+  return G;
 }
 
 bool comp(pair<int, int> a, pair<int, int> b)
