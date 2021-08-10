@@ -77,4 +77,6 @@ MDS GCS
 PI1 PI2
 GPEQ ProdutividadeEProfissionalismoEmES
 TCC1 TCC2
+MDS APC
+MétodosNuméricosParaEngenharia Calculo1
 -1 -1
